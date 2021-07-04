@@ -13,8 +13,7 @@ jobs:
       - name: install
         run: npm i
 
-      - name: lint
-        run: make lint
+      
 
       - name: test
         run: make test
