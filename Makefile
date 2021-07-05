@@ -2,10 +2,10 @@ lint:
 	npx eslint .
 
 test: 
-	npx jest
+	npm test
 
 test-watch:
-	npx jest --watch
+	npm test -- --watch
 
 test-coverage:
-	npx --node-options='--experimental-vm-modules --no-warnings' jest --coverage --coverageProvider=v8 
+	npm test -- --coverage --coverageProvider=v8 
