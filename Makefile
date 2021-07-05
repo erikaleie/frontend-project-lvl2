@@ -8,4 +8,4 @@ test-watch:
 	npx jest --watch
 
 test-coverage:
-	npx jest --coverage --coverageProvider=v8
+	npx --node-options='--experimental-vm-modules --no-warnings' jest --coverage --coverageProvider=v8 
