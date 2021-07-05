@@ -15,9 +15,9 @@ export default (path1, path2) => {
       return `    ${key}: ${json1[key]}`;
     }
     return `  - ${key}: ${json1[key]}\n  + ${key}: ${json2[key]}`;
-};
+  };
 
-  const mergedJson = Object.assign({}, json1, json2);
+  const mergedJson = { ...json1, ...json2 };
   const keys = Object.keys(mergedJson).sort();
 
   for (const key of keys) {

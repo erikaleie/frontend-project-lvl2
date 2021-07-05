@@ -13,11 +13,8 @@ jobs:
       - name: install
         run: npm i
 
-      - name: lint
-        run: make lint
-
-      - name: test
-        run: make test
+      # - name: lint
+      #   run: make lint
 
       - name: Test & publish code coverage
         # Publish code coverage on Code Climate
