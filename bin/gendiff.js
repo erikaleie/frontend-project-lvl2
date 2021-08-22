@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
+import { Command } from 'commander/esm.mjs';
 import genDiff from '../src/gendiff.js';
+
+const program = new Command();
 
 program
   .arguments('<filepath1> <filepath2>')

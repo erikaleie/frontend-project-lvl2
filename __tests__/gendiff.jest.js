@@ -17,4 +17,5 @@ const result = readFile('result_plain');
 
 test('gendiff', () => {
   expect(gendiff('files/file1.json', 'files/file2.json')).toEqual(result);
+  expect(gendiff('files/file1.yaml', 'files/file2.yml')).toEqual(result);
 });
