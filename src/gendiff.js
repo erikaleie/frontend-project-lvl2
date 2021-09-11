@@ -1,16 +1,17 @@
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
-import parser from './parsers.js';
+import parse from './parsers.js';
 
 export default (path1, path2) => {
-  const file1Ext = path1.split('.').pop();
-  const data1 = fs.readFileSync(path.resolve(path1), 'utf-8');
-  const obj1 = parser(file1Ext, data1);
+  const format1 = path.extname(path1).substring(1);
+  const format2 = path.extname(path2).substring(1);
 
-  const file2Ext = path2.split('.').pop();
-  const data2 = fs.readFileSync(path.resolve(path2), 'utf-8');
-  const obj2 = parser(file2Ext, data2);
+  const data1 = fs.readFileSync(path.resolve(path1), 'utf8');
+  const data2 = fs.readFileSync(path.resolve(path2), 'utf8');
+
+  const obj1 = parse(data1, format1);
+  const obj2 = parse(data2, format2);
 
   const isThere = (key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) return `  - ${key}: ${obj1[key]}`;
