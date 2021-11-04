@@ -1,10 +1,10 @@
 import yaml from 'js-yaml';
 
-export default (fileExt, data) => {
-  if (fileExt === 'yaml' || fileExt === 'yml') {
+export default (data, format) => {
+  if (format === 'yaml' || format === 'yml') {
     return yaml.load(data);
   }
-  if (fileExt === 'json') {
+  if (format === 'json') {
     return JSON.parse(data);
   }
   return null;
