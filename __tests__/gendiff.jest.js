@@ -10,7 +10,12 @@ const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filen
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
 const result = readFile('result_nested');
+const resultPlainFormat = readFile('result_plainFormat');
 
 test('gendiff', () => {
-  expect(gendiff('files/file1.yaml', 'files/file2.json')).toEqual(result);
+
+  //expect(gendiff('files/file1.yaml', 'files/file2.json')).toEqual(result);
+  expect(gendiff('files/file1.yaml', 'files/file2.json', 'plain')).toEqual(resultPlainFormat);
+
+ // expect(gendiff('files/file1.yaml', 'files/file2.json').slice(0, 3).split('\n').join('*\n')).toEqual(result.slice(0, 3).split('\n').join('*\n'));
 });
