@@ -2,7 +2,7 @@ import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import parse from './parsers.js';
-import formater from './formater.js';
+import formater from './formatters/index.js';
 
 export default (path1, path2, format = 'stylish') => {
   const format1 = path.extname(path1).substring(1);
@@ -14,20 +14,27 @@ export default (path1, path2, format = 'stylish') => {
   const obj1 = parse(data1, format1);
   const obj2 = parse(data2, format2);
 
-  const diff = (obj1, obj2) => {
-    const mergedObj = { ...obj1, ...obj2 };
+  const diff = (inObj1, inObj2) => {
+    const mergedObj = { ...inObj1, ...inObj2 };
     const keys = Object.keys(mergedObj).sort();
 
     const result = keys.map((key) => {
-      if (_.isObject(obj1[key]) && _.isObject(obj2[key])) return {
+      if (_.isObject(inObj1[key]) && _.isObject(inObj2[key])) {
+        return {
+          name: key,
+          type: 'nested',
+          diff: diff(inObj1[key], inObj2[key]),
+        };
+      }
+      if (_.has(inObj1, key) && !_.has(inObj2, key)) return { name: key, type: 'deleted', value: inObj1[key] };
+      if (!_.has(inObj1, key) && _.has(inObj2, key)) return { name: key, type: 'added', value: inObj2[key] };
+      if (inObj1[key] === inObj2[key]) return { name: key, type: 'unchanged', value: inObj1[key] };
+      return {
         name: key,
-        type: 'nested',
-        diff: diff(obj1[key], obj2[key]),
+        type: 'changed',
+        value: inObj1[key],
+        newValue: inObj2[key],
       };
-      if (_.has(obj1, key) && !_.has(obj2, key)) return { name: key, type: 'deleted', value: obj1[key] };
-      if (!_.has(obj1, key) && _.has(obj2, key)) return { name: key, type: 'added', value: obj2[key] };
-      if (obj1[key] === obj2[key]) return { name: key, type: 'unchanged', value: obj1[key] };
-      return { name: key, type: 'changed', value: obj1[key], newValue: obj2[key] };
     });
 
     return result;
@@ -36,6 +43,4 @@ export default (path1, path2, format = 'stylish') => {
   const unformattedResult = diff(obj1, obj2);
 
   return formater(format, unformattedResult);
-
-
 };
