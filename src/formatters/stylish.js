@@ -3,7 +3,7 @@ import _ from 'lodash';
 const REPLACER = '    ';
 
 const stringify = (obj, deepLevel) => {
-  const keys = Object.keys(obj).sort();
+  const keys = _.sortBy(Object.keys(obj));
   const res = keys.map((key) => {
     if (_.isObject(obj[key])) {
       return `${REPLACER.repeat(deepLevel)}${key}: ${stringify(obj[key], deepLevel + 1)}`;
