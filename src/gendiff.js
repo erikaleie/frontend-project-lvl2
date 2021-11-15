@@ -16,7 +16,7 @@ export default (path1, path2, format = 'stylish') => {
 
   const diff = (inObj1, inObj2) => {
     const mergedObj = { ...inObj1, ...inObj2 };
-    const keys = Object.keys(mergedObj).sort();
+    const keys = _.sortBy(Object.keys(mergedObj));
 
     const result = keys.map((key) => {
       if (_.isObject(inObj1[key]) && _.isObject(inObj2[key])) {
