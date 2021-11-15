@@ -2,12 +2,10 @@ import style from './stylish.js';
 import plain from './plain.js';
 import json from './json.js';
 
-export default (format, data) => {
-  if (format === 'plain') {
-    return plain(data);
-  }
-  if (format === 'json') {
-    return json(data);
-  }
-  return style(data);
+const mapping = {
+  plain: (data) => plain(data),
+  json: (data) => json(data),
+  stylish: (data) => style(data),
 };
+
+export default (format, data) => mapping[format](data);
