@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import parse from './parsers.js';
-import formater from './formatters/index.js';
-import diff from './gendiff.js';
+import applyFormatting from './formatters/index.js';
+import genDiff from './genDiff.js';
 
 export default (path1, path2, format = 'stylish') => {
   const format1 = path.extname(path1).substring(1);
@@ -14,7 +14,7 @@ export default (path1, path2, format = 'stylish') => {
   const obj1 = parse(data1, format1);
   const obj2 = parse(data2, format2);
 
-  const result = diff(obj1, obj2);
+  const result = genDiff(obj1, obj2);
 
-  return formater(format, result);
+  return applyFormatting(format, result);
 };

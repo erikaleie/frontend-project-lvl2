@@ -11,7 +11,7 @@ const stringify = (val) => {
 };
 
 export default (data) => {
-  const inner = (acc, innerData) => {
+  const iter = (acc, innerData) => {
     const result = innerData.flatMap((item) => {
       if (item.type === 'changed') {
         return `Property '${acc}${item.name}' was updated. From ${stringify(item.value)} to ${stringify(item.newValue)}`;
@@ -24,7 +24,7 @@ export default (data) => {
       }
       if (item.type === 'nested') {
         const newAcc = acc.concat(item.name, '.');
-        return inner(newAcc, item.diff);
+        return iter(newAcc, item.diff);
       }
       return [];
     }, '');
@@ -32,5 +32,5 @@ export default (data) => {
     return result.join('\n');
   };
 
-  return inner('', data);
+  return iter('', data);
 };
