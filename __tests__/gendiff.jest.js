@@ -9,9 +9,9 @@ const __dirname = dirname(__filename);
 const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filename);
 const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-const resultNested = readFile('resultNested');
-const resultPlainFormat = readFile('resultPlainFormat');
-const resultJson = readFile('resultJson');
+const resultNested = readFile('result_nested');
+const resultPlainFormat = readFile('result_plain_format');
+const resultJson = readFile('result_json');
 
 test('gendiff', () => {
   expect(gendiff('files/file1.json', 'files/file2.yml')).toEqual(resultNested);

@@ -26,30 +26,22 @@ const print = (data) => {
       const newVal = _.isPlainObject(item.newValue)
         ? stringify(item.newValue, deepLevel + 1) : item.newValue;
 
-      if (item.type === 'nested') {
-        return [
-          `${REPLACER.repeat(deepLevel)}${item.name}: {`,
-          `${iter(item.diff, deepLevel + 1)}`,
+      const mapping = {
+        nested: (it) => [
+          `${REPLACER.repeat(deepLevel)}${it.name}: {`,
+          `${iter(it.diff, deepLevel + 1)}`,
           `${REPLACER.repeat(deepLevel)}}`,
-        ].join('\n');
-      }
+        ].join('\n'),
+        changed: (it) => [
+          `${ident(deepLevel)}- ${it.name}: ${val}`,
+          `${ident(deepLevel)}+ ${it.name}: ${newVal}`,
+        ].join('\n'),
+        deleted: (it) => `${ident(deepLevel)}- ${it.name}: ${val}`,
+        added: (it) => `${ident(deepLevel)}+ ${it.name}: ${val}`,
+        unchanged: (it) => `${REPLACER.repeat(deepLevel)}${it.name}: ${val}`,
+      };
 
-      if (item.type === 'changed') {
-        return [
-          `${ident(deepLevel)}- ${item.name}: ${val}`,
-          `${ident(deepLevel)}+ ${item.name}: ${newVal}`,
-        ].join('\n');
-      }
-
-      if (item.type === 'deleted') {
-        return `${ident(deepLevel)}- ${item.name}: ${val}`;
-      }
-
-      if (item.type === 'added') {
-        return `${ident(deepLevel)}+ ${item.name}: ${val}`;
-      }
-
-      return `${REPLACER.repeat(deepLevel)}${item.name}: ${val}`;
+      return mapping[item.type](item);
     });
     return result.join('\n');
   };
