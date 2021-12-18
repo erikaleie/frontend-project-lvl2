@@ -4,13 +4,16 @@ const REPLACER = '    ';
 
 const ident = (deepLevel) => REPLACER.repeat(deepLevel).slice(0, -2);
 
-const stringify = (obj, deepLevel) => {
-  const keys = _.sortBy(Object.keys(obj));
+const stringify = (value, deepLevel) => {
+  if (!_.isPlainObject(value)) {
+    return value;
+  }
+  const keys = _.sortBy(Object.keys(value));
   const res = keys.map((key) => {
-    if (_.isPlainObject(obj[key])) {
-      return `${REPLACER.repeat(deepLevel)}${key}: ${stringify(obj[key], deepLevel + 1)}`;
+    if (_.isPlainObject(value[key])) {
+      return `${REPLACER.repeat(deepLevel)}${key}: ${stringify(value[key], deepLevel + 1)}`;
     }
-    return `${REPLACER.repeat(deepLevel)}${key}: ${obj[key]}`;
+    return `${REPLACER.repeat(deepLevel)}${key}: ${value[key]}`;
   });
   return [
     '{',
@@ -19,29 +22,28 @@ const stringify = (obj, deepLevel) => {
   ].join('\n');
 };
 
+const mapping = {
+  nested: (it, deepLevel, iter) => [
+    `${REPLACER.repeat(deepLevel)}${it.name}: {`,
+    `${iter(it.diff, deepLevel + 1)}`,
+    `${REPLACER.repeat(deepLevel)}}`,
+  ].join('\n'),
+  changed: (it, deepLevel, iter, val, newVal) => [
+    `${ident(deepLevel)}- ${it.name}: ${val}`,
+    `${ident(deepLevel)}+ ${it.name}: ${newVal}`,
+  ].join('\n'),
+  deleted: (it, deepLevel, iter, val) => `${ident(deepLevel)}- ${it.name}: ${val}`,
+  added: (it, deepLevel, iter, val) => `${ident(deepLevel)}+ ${it.name}: ${val}`,
+  unchanged: (it, deepLevel, iter, val) => `${REPLACER.repeat(deepLevel)}${it.name}: ${val}`,
+};
+
 const print = (data) => {
   const iter = (innerData, deepLevel) => {
     const result = innerData.map((item) => {
-      const val = _.isPlainObject(item.value) ? stringify(item.value, deepLevel + 1) : item.value;
-      const newVal = _.isPlainObject(item.newValue)
-        ? stringify(item.newValue, deepLevel + 1) : item.newValue;
+      const val = stringify(item.value, deepLevel + 1);
+      const newVal = stringify(item.newValue, deepLevel + 1);
 
-      const mapping = {
-        nested: (it) => [
-          `${REPLACER.repeat(deepLevel)}${it.name}: {`,
-          `${iter(it.diff, deepLevel + 1)}`,
-          `${REPLACER.repeat(deepLevel)}}`,
-        ].join('\n'),
-        changed: (it) => [
-          `${ident(deepLevel)}- ${it.name}: ${val}`,
-          `${ident(deepLevel)}+ ${it.name}: ${newVal}`,
-        ].join('\n'),
-        deleted: (it) => `${ident(deepLevel)}- ${it.name}: ${val}`,
-        added: (it) => `${ident(deepLevel)}+ ${it.name}: ${val}`,
-        unchanged: (it) => `${REPLACER.repeat(deepLevel)}${it.name}: ${val}`,
-      };
-
-      return mapping[item.type](item);
+      return mapping[item.type](item, deepLevel, iter, val, newVal);
     });
     return result.join('\n');
   };
