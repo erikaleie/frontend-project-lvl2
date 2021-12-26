@@ -1,3 +1,7 @@
+make setup:
+	npm ci
+	npm link
+
 lint:
 	npm run lint
 

@@ -4,7 +4,7 @@ const genDiff = (inObj1, inObj2) => {
   const mergedObj = { ...inObj1, ...inObj2 };
   const keys = _.sortBy(Object.keys(mergedObj));
 
-  const result = keys.map((key) => {
+  return keys.map((key) => {
     if (_.isPlainObject(inObj1[key]) && _.isPlainObject(inObj2[key])) {
       return {
         name: key,
@@ -22,7 +22,6 @@ const genDiff = (inObj1, inObj2) => {
       newValue: inObj2[key],
     };
   });
-  return result;
 };
 
 export default genDiff;

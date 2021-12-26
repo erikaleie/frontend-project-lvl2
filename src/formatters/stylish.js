@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-const REPLACER = '    ';
+const REPLACER = ' ';
 
-const ident = (deepLevel) => REPLACER.repeat(deepLevel).slice(0, -2);
+const ident = (deepLevel) => REPLACER.repeat(4 * deepLevel);
 
 const stringify = (value, deepLevel) => {
   if (!_.isPlainObject(value)) {
@@ -11,30 +11,30 @@ const stringify = (value, deepLevel) => {
   const keys = _.sortBy(Object.keys(value));
   const res = keys.map((key) => {
     if (_.isPlainObject(value[key])) {
-      return `${REPLACER.repeat(deepLevel)}${key}: ${stringify(value[key], deepLevel + 1)}`;
+      return `${ident(deepLevel)}${key}: ${stringify(value[key], deepLevel + 1)}`;
     }
-    return `${REPLACER.repeat(deepLevel)}${key}: ${value[key]}`;
+    return `${ident(deepLevel)}${key}: ${value[key]}`;
   });
   return [
     '{',
     res.join('\n'),
-    `${REPLACER.repeat(deepLevel - 1)}}`,
+    `${ident(deepLevel - 1)}}`,
   ].join('\n');
 };
 
 const mapping = {
   nested: (it, deepLevel, iter) => [
-    `${REPLACER.repeat(deepLevel)}${it.name}: {`,
+    `${ident(deepLevel)}${it.name}: {`,
     `${iter(it.diff, deepLevel + 1)}`,
-    `${REPLACER.repeat(deepLevel)}}`,
+    `${ident(deepLevel)}}`,
   ].join('\n'),
   changed: (it, deepLevel, iter, val, newVal) => [
-    `${ident(deepLevel)}- ${it.name}: ${val}`,
-    `${ident(deepLevel)}+ ${it.name}: ${newVal}`,
+    `${ident(deepLevel).slice(0, -2)}- ${it.name}: ${val}`, // @TODO
+    `${ident(deepLevel).slice(0, -2)}+ ${it.name}: ${newVal}`,// @TODO
   ].join('\n'),
-  deleted: (it, deepLevel, iter, val) => `${ident(deepLevel)}- ${it.name}: ${val}`,
-  added: (it, deepLevel, iter, val) => `${ident(deepLevel)}+ ${it.name}: ${val}`,
-  unchanged: (it, deepLevel, iter, val) => `${REPLACER.repeat(deepLevel)}${it.name}: ${val}`,
+  deleted: (it, deepLevel, iter, val) => `${ident(deepLevel).slice(0, -2)}- ${it.name}: ${val}`,// @TODO
+  added: (it, deepLevel, iter, val) => `${ident(deepLevel).slice(0, -2)}+ ${it.name}: ${val}`,// @TODO
+  unchanged: (it, deepLevel, iter, val) => `${ident(deepLevel)}${it.name}: ${val}`,
 };
 
 const print = (data) => {
