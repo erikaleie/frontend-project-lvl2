@@ -1,4 +1,4 @@
-make setup:
+setup:
 	npm ci
 	npm link
 
